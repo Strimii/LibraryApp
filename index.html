@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AplikacjaV1</title>
+    <!--OnsUI-->
+    <link href="css/onsenui.css" rel="stylesheet" type="text/css">
+    <link href="css/onsen-css-components.min.css" rel="stylesheet" type="text/css">
+    <script src="scripts/onsenui.min.js"></script>
+    <script src="scripts/onsenui.js"></script>
+    <!---------->
+    <!--JavaScript-->
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="scripts/platformOverrides.js"></script>
+    <script type="text/javascript" src="scripts/index.js"></script>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: gap: * https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' http://fonts.googleapis.com/ 'unsafe-inline'; media-src *">
+
+    <link href="css/fa-fa.css" rel="stylesheet" type="text/css" />
+	<link href="css/main.css" rel="stylesheet" type="text/css" />
+    <script src="scripts/jquery-3.4.1.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,500,700" rel="stylesheet" type="text/css" />
+    <!---------->
+    <!--ICON-->
+    <platform name="android">
+        <icon src="icons/icon-36-ldpi.png" density="ldpi" />
+        <icon src="icons/icon-48-mdpi.png" density="mdpi" />
+        <icon src="icons/icon-72-hdpi.png" density="hdpi" />
+        <icon src="icons/icon-96-xhdpi.png" density="xhdpi" />
+        <link href="css/index.css" rel="stylesheet" type="text/css">
+    </platform>
+    <!-------->
+ 
+    <script>
+        function login() {
+            var loginreg = $("#login").val();
+            var passwordreg = $("#haslo").val();
+            
+            if (loginreg == "" || passwordreg == "") {
+                alert("Podaj login i/lub haslo");
+                return;
+            }
+        
+            $.ajax({
+                type: 'POST',
+                url: "https://libraryapp1.000webhostapp.com/htdocs/logintest.php",
+                data: {loginreg: loginreg, passwordreg: passwordreg},
+                dataType: 'json',
+                timeout: 5000,
+                success: function (data, status) {
+                    if (data && data.login && data.password && data.login == loginreg && data.password == passwordreg) {
+                        $('#loguj').attr("onclick", "proceedToDashboard()");
+                        $('#loguj').addClass("button--zielony").removeClass("button--pomaranczka button--czerwony");
+                        $('#loguj a').attr("href", "index2.html").text("Zaloguj");
+                        localStorage.setItem('cachedValue', data.login);
+                        proceedToDashboard();
+                    } else {
+                        $('#loguj').attr("onclick", "login()");
+                        $('#loguj').removeClass("button--zielony button--pomaranczka").addClass("button--czerwony");
+                        $('#loguj a').text("Zaloguj");
+                        ons.notification.alert('Bledny login i/lub haslo');
+                    }
+                },
+                error: function() {
+                    ons.notification.alert('Błąd połączenia z serwerem');
+                }
+            });
+        }
+        
+        function proceedToDashboard() {
+            location.href = "index2.html";
+        }
+        
+        function rejestracja() {
+            var loginreg = $("#login").val();
+            var passwordreg = $("#haslo").val();
+           
+            if (loginreg == "" || passwordreg ==""){alert("Podaj login i/lub haslo");}
+            else{
+                return $.ajax({
+                    type: 'POST',
+                    url: "https://libraryapp1.000webhostapp.com/htdocs/registertest.php",
+                    data: {loginreg: loginreg},
+                    dataType: 'json',
+                    async: false,
+                    timeout: 5000,
+                    success: function (data, status) {
+                        if(data.login == loginreg){
+                            ons.notification.alert('Podany login juz istnieje');
+                            $('#rejestruj').addClass("button--czerwony");
+                            $('#rejestruj').removeClass("button--zielony");
+                            $('#rejestruj').removeClass("button--pomaranczka");
+                        } 
+                    }
+                });
+            } 
+        };
+        
+        function registeraccept(){
+            var loginreg = $("#login").val();
+            var passwordreg = $("#haslo").val();
+            
+            $.ajax({
+                type: "POST",
+                url: "https://libraryapp1.000webhostapp.com/htdocs/register.php",
+                data: {loginreg: loginreg, passwordreg: passwordreg},
+                success: function (data) {
+                    ons.notification.alert("Pomyslnie dodano nowe konto!");
+                    $('#rejestruj').removeClass("button--czerwony");
+                    $('#rejestruj').addClass("button--zielony");
+                    $('#rejestruj').removeClass("button--pomaranczka");  
+                }
+            }); 
+        };
+        
+        
+        function rejestracjafull(){
+            $('#rejestruj').removeClass("button--czerwony");
+            $('#rejestruj').removeClass("button--zielony");
+            $('#rejestruj').addClass("button--pomaranczka");    
+            rejestracja()
+            if($('#rejestruj').hasClass('button--pomaranczka')){
+                registeraccept()
+            }
+        };
+        </script>
+        
+</head>
+    <body>
+
+        <ons-page>
+            <ons-toolbar id="toolbar-gora" class="toolbar--pomaranczowy">
+                <div class="left">
+                    <ons-toolbar-button icon="md-face">
+
+                    </ons-toolbar-button>
+                </div>
+                <div class="center">
+                    Aplikacja V1
+                </div>
+                <div class="right" id="cf2">
+
+                    
+                </div>
+
+
+            </ons-toolbar>
+            <div style="text-align: center" id="strona" class="jasno">
+                <div class="xx1">
+                    <h2 modifier="czcionka">Logowanie</h2>
+                    <p>
+                        <ons-input id="login" type="text" modifier="underbar" placeholder="Nazwa" float></ons-input>
+                    </p>
+
+                    <p>
+                        <ons-input id="haslo" type="password" modifier="underbar" placeholder="Haslo" float></ons-input>
+                    </p>
+                    <br />
+                    <br />
+                    <br />
+                    <span id="zawartosc">
+                    <ons-button onclick="login()" class="button--pomaranczka" id="loguj">Zaloguj</ons-button>
+
+                    <ons-button onclick="rejestracjafull()" class="button--pomaranczka" id="rejestruj">Rejestracja</ons-button>
+
+                </div>
+                <div id="xxd">
+                <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                 </div>          
+                </div>
+            
+            <ons-bottom-toolbar id="bottom-bar-dol"class="bottom-bar--pomaranczowy">
+
+            </ons-bottom-toolbar>
+
+        </ons-page>
+
+    </body>
+</html>

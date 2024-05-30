@@ -1,0 +1,1450 @@
+﻿<!DOCTYPE html>
+<html lang="pl-PL">
+<head>
+    <title>AplikacjaV1</title>
+    <meta charset="UTF-8">
+    <!--OnsUI-->
+    <link href="css/onsenui.css" rel="stylesheet" type="text/css">
+    <link href="css/onsen-css-components.min.css" rel="stylesheet" type="text/css">
+    <script src="scripts/onsenui.min.js"></script>
+    <script src="scripts/onsenui.js"></script>
+    <!---------->
+    <!--JavaScript-->
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="scripts/platformOverrides.js"></script>
+    <script type="text/javascript" src="scripts/index.js"></script>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'
+            'unsafe-inline' data: gap: * https://ssl.gstatic.com 'unsafe-eval'; style-src
+            'self' http://fonts.googleapis.com/ 'unsafe-inline'; media-src *" />
+    <link href="css/fa-fa.css" rel="stylesheet" type="text/css" />
+    <link href="css/main.css" rel="stylesheet" type="text/css" />
+    <script src="scripts/jquery-3.4.1.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,500,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <!---------->
+    <!--ICON-->
+    <platform name="android">
+        <icon src="icons/icon-36-ldpi.png" density="ldpi" />
+        <icon src="icons/icon-48-mdpi.png" density="mdpi" />
+        <icon src="icons/icon-72-hdpi.png" density="hdpi" />
+        <icon src="icons/icon-96-xhdpi.png" density="xhdpi" />
+        <link href="css/index.css" rel="stylesheet" type="text/css">
+    </platform>
+    <!-------->
+    <!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////---CSS---/////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+    <style>
+       
+    </style>
+    <!--//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       /////////////////////////////////////////////---SCRIPT AJAX JS---//////////////////////////////////////////////////////////////////////
+       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+    <script>
+function wyloguj(){
+    localStorage.setItem('cachedValue', ""); 
+    loginID = "";       
+}
+
+function wyloguj1(){
+    location.href = "index.html";
+}
+
+localStorage.setItem('uczenidstorage', "");    
+const loginID = localStorage.getItem('cachedValue');
+localStorage.setItem('idksiazkistorage',"");
+ons.notification.alert("Witaj "+loginID);
+
+$(document).ready(function () {
+    $.ajax({
+        type: 'POST',
+        url: "https://libraryapp1.000webhostapp.com/htdocs/permission_get.php",
+        data: { loginID: loginID },
+        dataType: 'json',
+        async: false,
+        timeout: 5000,
+        success: function (data, status) {
+            if(data.permissions == "y"){
+                $("#nowa_ksiazka_button").show();
+                $("#uczniowie_button").show();
+                $("#wypozycz_button").show();
+                $("#wyloguj_button").show();
+                $("#menu_ucznia_button").hide();
+            } else if(data.im_naz == "Brak danych"){
+                ons.notification.alert("Konto nie zostało przypisane do konkretnego ucznia. Skontaktuj się z administratorem");
+                $("#kom").append('<h2>Konto nie zostało przypisane do konkretnego ucznia. Skontaktuj się z administratorem</h2>');
+                $("#nowa_ksiazka_button").hide();
+                $("#uczniowie_button").hide();
+                $("#wypozycz_button").hide();
+                $("#wyloguj_button").show();
+                $("#menu_ucznia_button").hide();
+            } else{
+                $("#nowa_ksiazka_button").hide();
+                $("#uczniowie_button").hide();
+                $("#wypozycz_button").hide();
+                $("#wyloguj_button").show();
+                $("#menu_ucznia_button").show();
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            ons.notification.alert("Wystąpił błąd podczas pobierania danych: " + textStatus + " - " + errorThrown);
+        }
+    });
+
+    $("#cf2").click(function () {
+        if ($('#bot1').css('opacity') == 0) {
+            $("#cf2 i.top").addClass("transparent");
+            $("#cf2 i.top").removeClass("nietransparent");
+            $("#cf2 i.bottom").addClass("nietransparent");
+            $("#cf2 i.bottom").removeClass("transparent");
+            $("#strona").addClass("ciemno");
+            $("#strona").removeClass("jasno");
+            $("#toolbar-gora").addClass("toolbar--ciemny");
+            $("#toolbar-gora").removeClass("toolbar--pomaranczowy");
+            $("#bottom-bar-dol").addClass("bottom-bar--ciemny");
+            $("#bottom-bar-dol").removeClass("bottom-bar--pomaranczowy");
+            $("#nowa_ksiazka_button").addClass("ciemny-guzik");
+            $("#wypozycz_button").addClass("ciemny-guzik");
+            $("#uczniowie_button").addClass("ciemny-guzik");
+            $("#wyloguj_button").addClass("ciemny-guzik");
+        }
+        else {
+            $("#cf2 i.bottom").addClass("transparent");
+            $("#cf2 i.bottom").removeClass("nietransparent");
+            $("#cf2 i.top").addClass("nietransparent");
+            $("#cf2 i.top").removeClass("transparent");
+
+            $("#strona").addClass("jasno");
+            $("#strona").removeClass("ciemno");
+            $("#toolbar-gora").addClass("toolbar--pomaranczowy");
+            $("#toolbar-gora").removeClass("toolbar--ciemny");
+            $("#bottom-bar-dol").addClass("bottom-bar--pomaranczowy");
+            $("#bottom-bar-dol").removeClass("bottom-bar--ciemny");
+            $("#nowa_ksiazka_button").removeClass("ciemny-guzik");
+            $("#wypozycz_button").removeClass("ciemny-guzik");
+            $("#uczniowie_button").removeClass("ciemny-guzik");
+            $("#wyloguj_button").removeClass("ciemny-guzik");
+        }
+    });
+});
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////-----------------------------------//////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////-------MENU UCZNIA-------//////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////-----------------------------------//////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        document.addEventListener('init', function(event) {
+            var page = event.target;
+
+            if (page.id === 'menu_ucznia') {
+
+                const loginID = localStorage.getItem('cachedValue');
+               
+               
+
+                $.ajax({
+                    type: 'POST',
+                    url: "https://libraryapp1.000webhostapp.com/htdocs/permission_get.php",
+                    data: { loginID: loginID },
+                    dataType: 'json',
+                    timeout: 5000,
+                    success: function (data) {
+                    
+                        $("#wyp_ksiazki_im_naz").append("<h2>"+data.im_naz+"</h2>");
+
+                            $.ajax({
+                                type: 'POST',
+                                url: "https://libraryapp1.000webhostapp.com/htdocs/ObecnieWypozyczone.php",
+                                data: { uczenIM: data.im_naz },
+                                dataType: 'json',
+                                timeout: 5000,
+                                success: function (data1) {
+                                    if(data1.wypozyczenia == "brak"){
+                                        $("#card_uczen1_id2").append("<br/><br/><i class=\"fas fa-exclamation-circle ikonka_duza\"></i><p id=\"pczcionka_id2\" class=\"pczcionka\">Brak obecnych wypozyczen<br></p>");
+                                    } else {
+                                        $("#card_uczen1_id2").append("<h3>Obecnie wypożyczona książka to : "+data1.wypozyczenia+"</h3>");
+                                    }
+                                }
+                            });
+
+                          
+
+
+
+
+                    }
+                    
+                });
+
+                var cardX = document.getElementById('card_id1');
+                $(cardX).css('display', 'block');
+
+                setTimeout(function () {
+                    $("#card_uczen1_id1").addClass("card2");
+                    $("#card_uczen1_id1").removeClass("card1");
+                    setTimeout(function () {
+                        var cardX1 = document.getElementById('card_id2');
+                        $(cardX1).css('display', 'block');
+                        setTimeout(function () {
+                            $("#card_uczen1_id2").addClass("card__content2");
+                            $("#card_uczen1_id2").removeClass("card__content1");
+     
+
+
+                        }, 500);
+                    }, 100);
+                }, 500);
+                
+
+            }
+        });
+
+        document.addEventListener('init', function(event) {
+            var page = event.target;    
+            if (page.id === 'historia_wypozyczen_menu') {
+                const loginID = localStorage.getItem('cachedValue');
+                $.ajax({
+                    type: 'POST',
+                    url: "https://libraryapp1.000webhostapp.com/htdocs/permission_get.php",
+                    data: { loginID: loginID },
+                    dataType: 'json',
+                    timeout: 5000,
+                    success: function (data) {
+                        setTimeout(function () {
+                            $("#card_uczen2_id1").addClass("card2");
+                            $("#card_uczen2_id1").removeClass("card1");
+                            setTimeout(function () {
+                                var cardX1 = document.getElementById('card_id2');
+                                $(cardX1).css('display', 'block');
+                                setTimeout(function () {
+                                    $("#card_uczen2_id2").addClass("card__content2");
+                                    $("#card_uczen2_id2").removeClass("card__content1");
+                                }, 500);
+                            }, 100);
+                        }, 500);
+
+                        $.ajax({
+                                type: 'POST',
+                                url: "https://libraryapp1.000webhostapp.com/htdocs/HistoriaWypozyczen.php",
+                                data: { uczenIM1: data.im_naz },
+                                dataType: 'json',
+                                timeout: 5000,
+                                success: function (data2) { 
+                                    $('#card_uczen2_id2').empty();
+                                    if(data2=="" || data2=="null"){
+                                       $("#card_uczen2_id2").append("<br/><br/><i class=\"fas fa-exclamation-circle ikonka_duza\"></i><p id=\"pczcionka_id2\" class=\"pczcionka\">Brak historii wypożyczeń<br></p>")
+                                    }else{
+                                        $("#card_uczen2_id2").append(data2);
+                                    }
+                                },
+                            });
+  
+                    }
+                });
+            }
+        });
+        document.addEventListener('init', function(event) {
+            var page = event.target;    
+            if (page.id === 'sprawdz_dostepnosc_menu') {
+                const loginID = localStorage.getItem('cachedValue');
+                        setTimeout(function () {
+                            $("#card_uczen3_id1").addClass("card2");
+                            $("#card_uczen3_id1").removeClass("card1");
+                            setTimeout(function () {
+                                var cardX1 = document.getElementById('card_id2');
+                                $(cardX1).css('display', 'block');
+                                setTimeout(function () {
+                                    $("#card_uczen3_id2").addClass("card__content2");
+                                    $("#card_uczen3_id2").removeClass("card__content1");
+                                }, 500);
+                            }, 100);
+                        }, 500);
+
+
+            }
+        });
+
+
+
+
+        function asortyment(){
+                $.ajax({
+                    type: 'POST',
+                    url: "https://libraryapp1.000webhostapp.com/htdocs/WyswietlAsortyment.php",
+                    data: { },
+                    dataType: 'json',
+                    timeout: 5000,
+                    success: function (data3) { 
+                        $('#card_uczen3_id2').empty();
+                        $("#card_uczen3_id2").append("<ons-button onclick=\"cofnij_asort()\" class=\"button--pomaranczka\" id=\"cofnij_asort\">Cofnij</ons-button><br>");
+                        $("#card_uczen3_id2").append(data3);
+                        
+                    },
+                });   
+
+
+            };
+            function szukaj_asort(){
+                var asortyment_input = $("#szukaj_asortyment_input").val();    
+                alert(asortyment_input);
+                $.ajax({
+                    type: 'POST',
+                    url: "https://libraryapp1.000webhostapp.com/htdocs/SzukajAsortyment.php",
+                    data: {asortyment_input: asortyment_input },
+                    dataType: 'json',
+                    timeout: 5000,
+                    success: function (data4) { 
+                        $('#card_uczen3_id2').empty();
+                        $("#card_uczen3_id2").append("<ons-button onclick=\"cofnij_asort()\" class=\"button--pomaranczka\" id=\"cofnij_asort\">Cofnij</ons-button><br>");
+                        $("#card_uczen3_id2").append(data4);
+                        
+                    },
+                });   
+
+
+            };
+            function cofnij_asort(){
+                $('#card_uczen3_id2').empty();    
+                $("#card_uczen3_id2").append("<ons-button onclick=\"asortyment()\" class=\"button--pomaranczka\" id=\"asortyment\">Asortyment</ons-button><ons-button onclick=\"szukaj_asort()\" class=\"button--pomaranczka\" id=\"szukaj_asortyment\">Wyszukaj</ons-button> <p><ons-input id=\"szukaj_asortyment_input\" type=\"text\" modifier=\"underbar\" placeholder=\"Szukaj\" float></ons-input></p>");
+
+            };
+
+        //PAGE1
+        document.addEventListener('init', function (event) {
+            var page = event.target;
+
+            if (page.id === 'page1') {
+                page.querySelector('#nowa_ksiazka_button').onclick = function () {
+                    document.querySelector('#myNavigator').pushPage('page2.html', { data: { title: 'Page 2' } });
+                };
+            } else if (page.id === 'page2') {
+                page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+            }
+        });
+       
+        //page 2
+        document.addEventListener('init', function (event) {
+            var page = event.target;
+
+            if (page.id === 'page1') {
+                page.querySelector('#uczniowie_button').onclick = function () {
+                    document.querySelector('#myNavigator').pushPage('uczniowie.html', { data: { title: 'Uczniowie' } });
+                };
+            } else if (page.id === 'Uczniowie') {
+                page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+            }
+        });
+        //page 3
+        document.addEventListener('init', function (event) {
+            var page = event.target;
+
+            if (page.id === 'page1') {
+                page.querySelector('#wypozycz_button').onclick = function () {
+                    document.querySelector('#myNavigator').pushPage('wypozycz.html', { data: { title: 'Wypożycz Książkę' } });
+                };
+            } else if (page.id === 'Wypozycz') {
+                page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+            }
+        });
+        //TABBAR
+        document.addEventListener('prechange', function (event) {
+            document.querySelector('#toolbar2page .center')
+                .innerHTML = event.tabItem.getAttribute('label');
+        });
+        //summary uczen
+       document.addEventListener('init', function (event) {
+            var page = event.target;
+
+            if (page.id === 'page1') {
+                page.querySelector('#menu_ucznia_button').onclick = function () {
+                    document.querySelector('#myNavigator').pushPage('menu_ucznia.html', { data: { title: 'Menu ucznia' } });
+                };
+            } else if (page.id === 'menu_ucznia') {
+                page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+            }
+        });
+        
+
+
+        function pojawianie() {
+            $("#tendivdoladowania").addClass("zaladujX1");
+            $("#tendivdoladowania").removeClass("zaladujX");
+        }
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////-----------------------------------//////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////-------SKRYPTY DODAJ KSIAZKE-------//////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////-----------------------------------//////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        function DodajAutora() {
+    var autor1 = $("#autor").val().toLowerCase();
+    function firstLetter(s) {
+        return s.replace(/^.{1}/g, s[0].toUpperCase());
+    }
+    var autor = firstLetter(autor1);
+    $.ajax({
+        type: "POST",
+        url: "https://libraryapp1.000webhostapp.com/htdocs/autor.php",
+        data: { autor: autor },
+        success: function (data) {
+            alert("Pomyślnie dodano nowego autora!");
+        }
+    });
+}
+
+function DodajGatunek() {
+    var gatunek1 = $("#gatunek").val().toLowerCase();
+    function firstLetter(s) {
+        return s.replace(/^.{1}/g, s[0].toUpperCase());
+    }
+    var gatunek = firstLetter(gatunek1);
+    $.ajax({
+        type: "POST",
+        url: "https://libraryapp1.000webhostapp.com/htdocs/gatunek.php",
+        data: { gatunek: gatunek },
+        success: function (data) {
+            alert("Pomyślnie dodano nowy gatunek!");
+        }
+    });
+}
+
+function AutorGet() {
+    $.ajax({
+        type: "GET",
+        url: "https://libraryapp1.000webhostapp.com/htdocs/selectbox-1.php",
+        dataType: 'json',
+        timeout: 5000,
+        success: function (data, status) {
+            $('#autorlista').empty();
+            $('#autorlista').append("<option value=\"\" disabled selected>Autor</option>" + data);
+        }
+    });
+}
+
+function GatunekGet() {
+    $.ajax({
+        type: "GET",
+        url: "https://libraryapp1.000webhostapp.com/htdocs/selectbox-2.php",
+        dataType: 'json',
+        timeout: 5000,
+        success: function (data, status) {
+            $('#gatuneklista').empty();
+            $('#gatuneklista').append("<option value=\"\" disabled selected>Gatunek</option>" + data);
+        }
+    });
+}
+
+function KlasyGet() {
+    $.ajax({
+        type: "GET",
+        url: "https://libraryapp1.000webhostapp.com/htdocs/selectbox-3.php",
+        dataType: 'json',
+        timeout: 5000,
+        success: function (data, status) {
+            $('#klasylista').empty();
+            $('#klasylista').append("<option value=\"\" disabled selected>Wybierz klasę</option>" + data);
+        }
+    });
+}
+
+function DodajKsiazke() {
+    var tytulX1 = $("#tytul").val().toLowerCase();
+    if (tytulX1 == "") { alert("Wpisz tytuł książki") }
+    function firstLetter(s) {
+        return s.replace(/^.{1}/g, s[0].toUpperCase());
+    }
+    var tytulX = firstLetter(tytulX1);
+    var autorX = $("#autorlista1").val();
+    var gatunekX = $("#gatuneklista1").val();
+    var rodzajX = $("#rodzajlista").val();
+    var ilosc_ksiazekX = $("#ilosc_ksiazek").val();
+    if (tytulX == "") { alert("Podaj tytuł książki"); }
+    else {
+        if (ilosc_ksiazekX == "") { alert("Podaj ilość książek"); }
+        else {
+            if (gatunekX == "") { alert("Wybierz gatunek książki"); }
+            else {
+                if (autorX == "") { alert("Wybierz autora książki"); }
+                else {
+                    if (rodzajX == "") { alert("Wybierz rodzaj książki"); }
+                    else {
+                        for (il = 0; il < ilosc_ksiazekX; il++) {
+                            $.ajax({
+                                type: "POST",
+                                url: "https://libraryapp1.000webhostapp.com/htdocs/dodaj-ksiazke.php",
+                                data: { tytulX: tytulX, autorX: autorX, gatunekX: gatunekX, rodzajX: rodzajX },
+                                success: function (data) {}
+                            });
+                        }
+                        alert("Nowa książka została pomyślnie dodana!");
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////-----------------------------------//////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////---------SKRYPTY UCZNIOWIE---------//////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////-----------------------------------//////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        /////////////////////////////
+        ////---UCZNIOWIE LISTY---////
+        /////////////////////////////
+
+///RozpocznijUczen
+
+        function RozpocznijUczen() {
+            $("#uczen_ikonka").addClass("ikonka_mala");
+            $("#uczen_ikonka").removeClass("ikonka_duza");
+            $("#div_zawartosc").addClass("div_drugi");
+            $("#div_zawartosc").removeClass("div_pierwszy");
+            document.getElementById('przycisk_fajny1').innerHTML = "<ons-button onclick=\"WczytajUczniow()\" id=\"test_test\" class=\"button--pomaranczka2\"><i class=\"fas fa-check\"></i>    Potwierdź </ons-button>  ";
+            $("#znikniety_select").addClass("pojawiony");
+            $("#znikniety_select").removeClass("znikniety");
+        }
+    
+///WyswietlUcznia
+
+        function WyswietlUcznia() {
+            var temp333 = $("#uczniowielista1").val();
+            if (temp333 == "") {
+                alert("Wybierz ucznia");
+            }
+            else {
+                $("#div_zawartosc").addClass("div_trzeci");
+                $("#div_zawartosc").removeClass("div_drugi");
+                document.getElementById('przycisk_fajny2').innerHTML = " <ons-button onclick=\"Cofnij2()\" class=\"button--pomaranczka2\"><i class=\"fas fa-undo\"></i>    Cofnij </ons-button> "
+                var cardX = document.getElementById('card_id1');
+                $(cardX).css('display', 'block');
+
+                setTimeout(function () {
+                    $("#card_id1").addClass("card2");
+                    $("#card_id1").removeClass("card1");
+                    setTimeout(function () {
+                        var cardX1 = document.getElementById('card_id2');
+                        $(cardX1).css('display', 'block');
+                        setTimeout(function () {
+                            $("#card_id2").addClass("card__content2");
+                            $("#card_id2").removeClass("card__content1");
+
+
+                        }, 500);
+                    }, 100);
+                }, 500);
+
+
+               
+
+                var uczen = $("#uczniowielista1").val();
+              
+                $.ajax({
+                    type: 'POST',
+                    url: "https://libraryapp1.000webhostapp.com/htdocs/WyswietlanieDanychUcznia.php",
+                    data: {uczen: uczen},
+                    dataType: 'json',
+                    async: false,
+                    timeout: 5000,
+                    success: function (data, status) {
+                        const uczenid = data.id;
+                        localStorage.setItem('uczenidstorage', uczenid);
+                        const tempidksiazki = localStorage.getItem('idksiazkistorage');
+                           if(tempidksiazki != "" && data.wypozyczenia == "brak"){
+                            document.getElementById('card_id2').innerHTML = " <br><ons-list> <ons-list-header>Imię i Nazwisko</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-user ikonka_mala_mala\"></i></div><div class=\"center\">" + data.imie_nazwisko + "</div></ons-list-item> <ons-list-header>Klasa Ucznia</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-table ikonka_mala_mala\"></i></div><div class=\"center\">" + data.klasa + "</div></ons-list-item>  <ons-list-header>Wypożyczone Książki</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-book ikonka_mala_mala\"></i></div><div class=\"center\">" + data.wypozyczenia + "</div></ons-list-item><ons-button class=\"buttonmniejszy button--pomaranczka\" onclick=\"wypozyczenie2(this)\">Wypożycz</ons-button></ons-list> ";
+
+                           }
+                           else if(data.wypozyczenia != "brak"){
+                             document.getElementById('card_id2').innerHTML = " <br><ons-list> <ons-list-header>Imię i Nazwisko</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-user ikonka_mala_mala\"></i></div><div class=\"center\">" + data.imie_nazwisko + "</div></ons-list-item> <ons-list-header>Klasa Ucznia</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-table ikonka_mala_mala\"></i></div><div class=\"center\">" + data.klasa + "</div></ons-list-item>  <ons-list-header>Wypożyczone Książki</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-book ikonka_mala_mala\"></i></div><div class=\"center\">" + data.wypozyczenia + "</div></ons-list-item><ons-button id=\""+ data.bookid+"\" class=\"buttonmniejszy button--pomaranczka\" onclick=\"zwracanie(this)\">Zwróć</ons-button></ons-list> ";
+
+                           }
+                           else{
+                            document.getElementById('card_id2').innerHTML = " <br><ons-list> <ons-list-header>Imię i Nazwisko</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-user ikonka_mala_mala\"></i></div><div class=\"center\">" + data.imie_nazwisko + "</div></ons-list-item> <ons-list-header>Klasa Ucznia</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-table ikonka_mala_mala\"></i></div><div class=\"center\">" + data.klasa + "</div></ons-list-item>  <ons-list-header>Wypożyczone Książki</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-book ikonka_mala_mala\"></i></div><div class=\"center\">" + data.wypozyczenia + "</div></ons-list-item></ons-list>";
+                           }
+                    },
+                });
+            }
+
+        }
+     
+///Cofnij2
+
+        function Cofnij2() {
+
+            localStorage.setItem('uczenidstorage', "");
+            var cardX = document.getElementById('card_id1');
+            var cardX1 = document.getElementById('card_id2');
+            $("#card_id2").addClass("card__content1");
+            $("#card_id2").removeClass("card__content2");
+            document.getElementById('przycisk_fajny2').innerHTML = " <ons-button onclick=\"Cofnij()\" class=\"button--pomaranczka2\"><i class=\"fas fa-undo\"></i>    Cofnij </ons-button> "
+            setTimeout(function () {
+                $("#card_id1").addClass("card1");
+                $("#card_id1").removeClass("card2");
+                setTimeout(function () {
+
+                    $(cardX1).css('display', 'none');
+                    setTimeout(function () {
+                        $(cardX).css('display', 'none');
+                        $("#div_zawartosc").addClass("div_drugi");
+                        $("#div_zawartosc").removeClass("div_trzeci");
+                    }, 300);
+                }, 500);
+            }, 500); 
+        }
+
+///WczytajUczniow
+
+        function WczytajUczniow() {
+           var temp222 = $("#klasylista1").val();
+           
+            if (temp222 == "") {
+                alert("Wybierz klasę");
+            }
+            else {
+                $("#znikniety_select2").addClass("pojawionyX2");
+                $("#znikniety_select2").removeClass("zniknietyX2");
+                $("#znikniety_select").addClass("znikniety");
+                $("#znikniety_select").removeClass("pojawiony");
+                var temp1 = document.getElementById('przycisk2');
+                $(temp1).css('display', 'block');
+                setTimeout(function () {
+                    $("#przycisk2").addClass("jest");
+                    $("#przycisk2").removeClass("nima");
+                }, 100);
+                var klasa = $("#klasylista1").val();
+                
+                
+
+                $.ajax({
+                    type: 'POST',
+                    url: "https://libraryapp1.000webhostapp.com/htdocs/uczniowie.php",
+                    data: {klasa: klasa},
+                    dataType: 'json',
+                    timeout: 5000,
+                    success: function (data, status) {
+                        $('#uczniowielista').empty();
+                        $('#uczniowielista').append("<option  value=\"\" disabled selected>Wybierz ucznia</option>" + data);
+                        document.getElementById('przycisk_fajny1').innerHTML = "<ons-button onclick=\"WyswietlUcznia()\" id=\"test_test\" class=\"button--pomaranczka2\"><i class=\"fas fa-check\"></i>    Potwierdź </ons-button>  ";
+                    },
+                });
+            }
+        }
+////////////////////////////////////
+
+function SzukajKsiazeczki() {
+            var ksiazeczka = $("#szukaj_ksiazki").val();
+
+            $("#DX1").addClass("takaklasa1");
+            $("#DX1").removeClass("div_pierwszy");
+            $("#przycisk_hehe1").addClass("button--pomaranczka2X");
+            $("#przycisk_hehe1").removeClass("button--pomaranczka2");
+
+            setTimeout(function () {
+                  var xxv = document.getElementById('ksiazka_pokaz');
+                $(xxv).css('display', 'block');
+                setTimeout(function () {
+                    $("#ksiazka_pokaz").addClass("card2");
+                    $("#ksiazka_pokaz").removeClass("card1");
+                    setTimeout(function () {
+                        $("#CX2").addClass("card__content2");
+                        $("#CX2").removeClass("card__content1");
+                    } , 500);
+                }, 200);
+
+            }, 500);
+            $.ajax({
+                type: 'POST',
+                url: "https://libraryapp1.000webhostapp.com/htdocs/wypozycz.php",
+                data: {ksiazeczka: ksiazeczka},
+                dataType: 'json',
+                async: false,
+                timeout: 5000,
+                success: function (data, status) { 
+                    $('#CX2').empty();
+                    if(data==""){
+                        document.getElementById('CX2').innerHTML = "<br/><br/><i class=\"fas fa-exclamation-circle ikonka_duza\"></i><p id=\"pczcionka_id2\" class=\"pczcionka\">Brak książek z podaną nazwą!<br></p>"
+                    }
+                    $('#CX2').append(data);
+                    
+                },
+            });
+        }
+
+function wypozyczenie1(ele){
+    const idksiazki = ele.id;
+    localStorage.setItem('idksiazkistorage', idksiazki);
+
+    ons.notification.alert('Ksiązka zapisana, ID = '+idksiazki+' wybierz ucznia.')
+      
+            
+
+
+}
+function getTitle(){
+    const bookid = localStorage.getItem('idksiazkistorage');
+    $.ajax({
+                type: 'POST',
+                url: "https://libraryapp1.000webhostapp.com/htdocs/gettitle.php",
+                data: {bookid: bookid},
+                dataType: 'json',
+                async: false,
+                timeout: 5000,
+                success: function (data, status) { 
+                    localStorage.setItem('bookTitle',data.tytul);
+
+                },
+            });
+
+}
+function wypozyczenie2(ele){
+    const bookid = localStorage.getItem('idksiazkistorage');
+    const uczenid = localStorage.getItem('uczenidstorage');
+    getTitle();
+    const title = localStorage.getItem('bookTitle');
+    $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "https://libraryapp1.000webhostapp.com/htdocs/wypozyczenie.php",
+                    data: { bookid: bookid, uczenid: uczenid, title: title},
+                    success: function (data, status) {
+                      
+                    },
+                });
+                ons.notification.alert("Książka "+title+ " wypożyczona pomyślnie!")
+
+} 
+function zwracanie(ele){
+const idzwracanie = ele.id;
+$.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "https://libraryapp1.000webhostapp.com/htdocs/zwracanie.php",
+                    data: { bookid: idzwracanie},
+                    success: function (data, status) {
+                        
+                    },
+                });    
+                ons.notification.alert("Książka zwrócona pomyślnie!")
+}   
+///Cofnij
+        function Cofnij() {
+            $("#znikniety_select2").addClass("zniknietyX2");
+            $("#znikniety_select2").removeClass("pojawionyX2 ");
+            $("#znikniety_select").addClass("pojawiony");
+            $("#znikniety_select").removeClass("znikniety");
+            var temp1 = document.getElementById('przycisk2');
+            $("#przycisk2").addClass("nima");
+            $("#przycisk2").removeClass("jest");
+            document.getElementById('przycisk_fajny1').innerHTML = "<ons-button onclick=\"WczytajUczniow()\" id=\"test_test\" class=\"button--pomaranczka2\"><i class=\"fas fa-check\"></i>    Potwierdź </ons-button>  ";
+            setTimeout(function () {
+                $(temp1).css('display', 'none');
+            }, 500);
+        }
+
+         /////////////////////////////
+        ////---UCZNIOWIE SEARCH---////
+        /////////////////////////////
+
+        ///uczniowieSearch1
+
+        function uczniowie_search1() {
+            var XR1 = $("#szukaj_ucznia").val();
+            if (XR1 == "") { alert("Wpisz imię i nazwisko ucznia"); }
+            else {
+                $("#D1").addClass("D1_class2");
+                $("#D1").removeClass("D1_class1");
+                document.getElementById('button_uczen1').innerHTML = "<ons-button onclick=\"uczniowie_search2()\" class=\"button--pomaranczka2\"><i class=\"fas fa-undo\"></i>  Cofnij </ons-button>";
+                setTimeout(function () {
+                    var cos = document.getElementById('C1');
+                    $(cos).css('display', 'block');
+
+                    setTimeout(function () {
+                        $("#C1").addClass("card2");
+                        $("#C1").removeClass("card1");
+
+                        setTimeout(function () {
+                            var cos1 = document.getElementById('C2');
+                            $(cos1).css('display', 'block');
+
+                            setTimeout(function () {
+                                $("#C2").addClass("card__content2");
+                                $("#C2").removeClass("card__content1");
+                            }, 100);
+                        }, 500);
+                    }, 100);
+                }, 500);
+                      
+                var uczen1 = $("#szukaj_ucznia").val();
+                    
+                $.ajax({
+                    type: 'POST',
+                    url: "https://libraryapp1.000webhostapp.com/htdocs/WyswietlanieDanychUcznia2.php",
+                    data: {uczen1: uczen1},
+                    async: false,
+                    dataType: 'json',
+                    timeout: 5000,
+                    success: function (data, status) {
+                        const uczenid = data.id;
+                        localStorage.setItem('uczenidstorage', uczenid);                                                                    
+
+                        const tempidksiazki = localStorage.getItem('idksiazkistorage');
+
+                      //  if (data==null) {
+                       //     alert("XDDD")
+                       //     document.getElementById('C2').innerHTML = "<br/><br/><i class=\"fas fa-exclamation-circle ikonka_duza\"></i><p id=\"pczcionka_id2\" class=\"pczcionka\">Nie ma takiego ucznia!<br></p>"
+                       // }
+                        
+                        if(tempidksiazki != "" && data.wypozyczenia == "brak"){
+                           document.getElementById('C2').innerHTML = " <br><ons-list> <ons-list-header>Imię i Nazwisko</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-user ikonka_mala_mala\"></i></div><div class=\"center\">" + data.imie_nazwisko + "</div></ons-list-item> <ons-list-header>Klasa Ucznia</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-table ikonka_mala_mala\"></i></div><div class=\"center\">" + data.klasa + "</div></ons-list-item>  <ons-list-header>Wypożyczone Książki</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-book ikonka_mala_mala\"></i></div><div class=\"center\">" + data.wypozyczenia + "</div></ons-list-item><ons-button class=\"buttonmniejszy button--pomaranczka\" onclick=\"wypozyczenie2(this)\">Wypożycz</ons-button></ons-list> ";
+                        }
+                        else if(data.wypozyczenia != "brak"){
+                             document.getElementById('C2').innerHTML = " <br><ons-list> <ons-list-header>Imię i Nazwisko</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-user ikonka_mala_mala\"></i></div><div class=\"center\">" + data.imie_nazwisko + "</div></ons-list-item> <ons-list-header>Klasa Ucznia</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-table ikonka_mala_mala\"></i></div><div class=\"center\">" + data.klasa + "</div></ons-list-item>  <ons-list-header>Wypożyczone Książki</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-book ikonka_mala_mala\"></i></div><div class=\"center\">" + data.wypozyczenia + "</div></ons-list-item><ons-button  id=\""+ data.bookid+"\" class=\"buttonmniejszy button--pomaranczka\" onclick=\"zwracanie(this)\">Zwróć</ons-button></ons-list> ";
+                        }     
+                        else{
+                            document.getElementById('C2').innerHTML = " <br><ons-list> <ons-list-header>Imię i Nazwisko</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-user ikonka_mala_mala\"></i></div><div class=\"center\">" + data.imie_nazwisko + "</div></ons-list-item> <ons-list-header>Klasa Ucznia</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-table ikonka_mala_mala\"></i></div><div class=\"center\">" + data.klasa + "</div></ons-list-item>  <ons-list-header>Wypożyczone Książki</ons-list-header><ons-list-item><div class=\"left\"><i class=\"fas fa-book ikonka_mala_mala\"></i></div><div class=\"center\">" + data.wypozyczenia + "</div></ons-list-item></ons-list>";
+                        }
+                           
+                           
+                       
+                    }
+                });
+              
+            }
+        }
+
+        ///uczniowieSearch2
+
+        function uczniowie_search2() {
+            $("#C2").addClass("card__content1");
+            $("#C2").removeClass("card__content2");
+
+
+            setTimeout(function () {
+                var cos1 = document.getElementById('C2');
+                $(cos1).css('display', 'none');
+            }, 1000);
+            setTimeout(function () {
+                $("#C1").addClass("card1");
+                $("#C1").removeClass("card2");
+                setTimeout(function () {
+                    var cos = document.getElementById('C1');
+                    $(cos).css('display', 'none');
+                    setTimeout(function () {
+
+                        $("#D1").addClass("D1_class1");
+                        $("#D1").removeClass("D1_class2");
+                        setTimeout(function () {
+                            document.getElementById('button_uczen1').innerHTML = "  <ons-button onclick=\"uczniowie_search1()\" class=\"button--pomaranczka2\"><i class=\"fas fa-check\"></i>  Potwierdź </ons-button>";
+
+                        }, 1000);
+                    }, 100);
+                }, 800);
+            }, 500);
+
+        }
+
+
+        
+    
+
+
+        
+    </script>
+</head>
+
+
+
+
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////--------------------------///////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////-----------BODY-----------///////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////--------------------------///////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+<body>
+
+
+    <!--//////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////--MENU--/////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////-->
+    <ons-navigator swipeable id="myNavigator" page="page1.html"></ons-navigator>
+    <template id="page1.html">
+        <ons-page id="page1">
+            <ons-toolbar id="toolbar-gora" modifier="transparen cover-content" class="toolbar--pomaranczowy">
+                <div class="left">
+                    <ons-toolbar-button>
+                        <span id="user"></span>
+
+                    </ons-toolbar-button>
+                </div>
+                
+                <div class="center">
+                    Aplikacja V1
+                </div>
+                
+                <div class="right" id="cf2">
+
+                    <i id="bot1" class="fas fa-moon bottom"></i>
+                    <i id="top1" class="fas fa-sun top"></i>
+                </div>
+
+
+            </ons-toolbar>
+            <div id="strona" class="jasno">
+
+
+                <ons-card id="nowa_ksiazka_button">
+                    <div class="title">Nowa Książka</div>
+                    <div class="content">Dodaj całkowicie nową książkę do Bazy Danych!</div>
+                </ons-card>
+
+                <ons-card id="uczniowie_button">
+                    <div class="title">Uczniowie</div>
+                    <div class="content">Wyszukaj listę obecnych klas oraz uczniów!</div>
+                </ons-card>
+
+                <ons-card id="wypozycz_button">
+                    <div class="title">Wypożycz Książkę</div>
+                    <div class="content">Wypożycz Książkę uczniowi!</div>
+                </ons-card>
+
+             
+                <ons-card id="menu_ucznia_button">
+                    <div class="title">Menu ucznia</div>
+                    <div class="content">Wyświetl menu ucznia!</div>
+                </ons-card>
+                <span id="kom">
+
+                </span>
+
+                <ons-card id="wyloguj_button" onclick="wyloguj()">
+                    
+                    <div class="title"><a href="index.html">Wyloguj</a></div>
+                    <div class="content">Wyloguj się z aplikacji!</div>
+
+                </ons-card>
+            </div>
+
+            <ons-bottom-toolbar id="bottom-bar-dol" class="bottom-bar--pomaranczowy">
+
+            </ons-bottom-toolbar>
+
+        </ons-page>
+    </template>
+
+
+
+
+    <!--//////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////--NOWA KSIĄŻKA--/////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////-->
+    <template id="page2.html">
+        <ons-page id="Nowa Książka">
+            <div id="tymczasowy">
+
+                <ons-tabbar swipeable position="auto">
+
+                    <ons-tab onclick="AutorGet()" page="tab1.html" label="Nowa Książka" icon= "fa-book" badge="7" active>
+
+                    </ons-tab>
+
+                  <!--  <ons-tab page="tab2.html" label="Usuń książki" icon="fa-book" active-icon="fa-pen-square">
+                    </ons-tab>-->
+
+                    <ons-tab page="tab3.html" label="Nowy Autor" icon="fa-user-edit" active-icon="fa-male">
+                    </ons-tab>
+
+                    <ons-tab page="tab4.html" label="Nowy Gatunek" icon="fa-google-plus-g" active-icon="fa-edit">
+                    </ons-tab>
+
+                </ons-tabbar>
+
+                <ons-toolbar id="toolbar2page" class="toolbar--pomaranczowy">
+                    <div class="left"><ons-back-button></ons-back-button></div>
+                    <div class="center">Nowa Książka</div>
+                    <div class="right"></div>
+                </ons-toolbar>
+            </div>
+        </ons-page>
+    </template>
+    <!--TABBAR NOWA  KSIĄZKA -->
+    <template id="tab1.html">
+        <ons-page id="Tab1">
+            <p id="test1" style="text-align: center; font-family:'Raleway', sans-serif;font-size:18px;">
+                Nowa Książka<br />
+                <br />
+
+                <ons-button style="margin:0px" onclick="AutorGet(),GatunekGet(),pojawianie()" class="button--pomaranczka2">
+                    Kliknij aby załadować
+                    <i class="fas fa-sync-alt">
+
+                    </i>
+                </ons-button>
+            </p>
+            <div id="tendivdoladowania" class="zaladujX" style="text-align:center; margin-top:10%;">
+
+
+                <p>
+                    <ons-input id="tytul" modifier="underbar" type="text" placeholder="Tytuł" float></ons-input>
+                </p>
+                <br />
+                <p>
+                    <ons-input id="ilosc_ksiazek" modifier="underbar" type="number" placeholder="Ilość książek" float></ons-input>
+                </p>
+                <br />
+                <p>
+                    <ons-select id="gatuneklista1">
+                        <select id="gatuneklista" class="select-input select-input--material">
+                            <option value="" disabled selected>Gatunek</option>
+                        </select>
+                    </ons-select>
+                </p>
+                <br />
+                <p>
+                    <ons-select id="autorlista1">
+                        <select id="autorlista" class="select-input select-input--material">
+                            <option value="" disabled selected>Autor</option>
+
+
+                        </select>
+
+
+                    </ons-select>
+                </p>
+                <br />
+                <p>
+                    <ons-select id="rodzajlista" placeholder="Gatunek">
+                        <option value="" disabled selected>Rodzaj</option>
+                        <option>Lektura</option>
+                        <option>Książka</option>
+                    </ons-select>
+                </p>
+                <br />
+                <p>
+                    <ons-button onclick="DodajKsiazke()" class="button--pomaranczka2"> Potwierdź </ons-button>
+                </p>
+            </div>
+        </ons-page>
+    </template>
+   <!-- <template id="tab2.html">
+        <ons-page id="Tab2">
+            
+            <div id="DX1" class="div_pierwszy">
+                <i class="fas fa-book ikonka_duza"></i>
+                <p class="pczcionka">
+                    Wyszukaj książkę do usunięcia<br />
+                </p>
+                <br />
+                <ons-search-input placeholder="Szukaj"
+                                  onchange="ons.notification.alert('Searched for: ' + this.value)">
+                    <input type="search" id="szukaj_ksiazki" class="search-input search-input--material" placeholder="Szukaj">
+
+                </ons-search-input>
+
+
+
+            </div>
+            <div id="button_wypozycz1" style="text-align:center">
+
+                <span id="button_wypozycz1">    <ons-button id="przycisk_hehe1"onclick="" class="button--pomaranczka2"><i class="fas fa-search"></i>    Wyszukaj </ons-button></span>
+
+            </div>
+            <div id="ksiazka_pokaz" class="card card1">
+                <div class="card__content card__content1" id="CX2" style="text-align:center;">
+
+                </div>
+            </div>
+            
+        </ons-page>
+    </template>-->
+    <template id="tab3.html">
+        <ons-page id="Tab3">
+
+            <div style="text-align:center; margin-top:15%;">
+                <p>
+                    <i class="fas fa-users" style="font-size:9rem; color:#ffa64d;"></i>
+                </p>
+                <p style="font-size:18px;">
+                    Brakuje Twojego autora?<br /> Dodaj go poniżej!
+                </p>
+                <br />
+                <p>
+                    <ons-input id="autor" modifier="underbar" type="text" placeholder="Autor" float></ons-input>
+                </p>
+                <br />
+                <p>
+                    <ons-button id="autor_submit" onclick="DodajAutora(),AutorGet()" class="button--pomaranczka2"> Potwierdź </ons-button>
+                </p>
+            </div>
+        </ons-page>
+    </template>
+
+    <template id="tab4.html">
+        <ons-page id="Tab3">
+
+            <div style="text-align:center; margin-top:15%;">
+                <p>
+                    <i class="fas fa-pen-square" style="font-size:9rem; color:#ffa64d;"></i>
+                </p>
+                <p style="font-size:18px;">
+                    Brakuje Twojego gatunku?<br /> Dodaj go poniżej!
+
+                </p>
+                <br />
+                <p>
+                    <ons-input id="gatunek" modifier="underbar" type="text" placeholder="Gatunek" float></ons-input>
+                </p>
+                <br />
+                <p>
+                    <ons-button onclick="DodajGatunek(),GatunekGet()" class="button--pomaranczka2"> Potwierdź </ons-button>
+                </p>
+            </div>
+        </ons-page>
+    </template>
+
+
+
+    <!--//////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////--UCZNIOWIE--/////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////-->
+
+    <template id="uczniowie.html">
+        <ons-page id="Uczniowie">
+            <div id="tymczasowy">
+
+                <ons-tabbar swipeable position="auto">
+
+
+
+
+                    <ons-tab page="uczniowielist.html" label="Uczniowie" icon="fa-user-edit" active-icon="fa-male">
+                    </ons-tab>
+
+                    <ons-tab page="uczniowiesearch.html" label="Wyszukaj" icon="fa-search" active-icon="fa-edit">
+                    </ons-tab>
+
+                </ons-tabbar>
+
+                <ons-toolbar id="toolbar2page" class="toolbar--pomaranczowy">
+                    <div class="left"><ons-back-button></ons-back-button></div>
+                    <div class="center">Nowa Książka</div>
+                    <div class="right"></div>
+                </ons-toolbar>
+            </div>
+        </ons-page>
+    </template>
+    <!--TABBAR UCZNIOWIE -->
+    <template id="uczniowielist.html">
+        <ons-page id="uczniowie1">
+
+            <div id="div_zawartosc" class="div_pierwszy">
+
+                <p>
+                    <i id="uczen_ikonka" class="fas fa-user-graduate ikonka_duza"></i>
+                </p>
+                <p id="pczcionka_id" class="pczcionka">
+                    Wyszukaj listę uczniów<br />
+                </p>
+                <p id="znikniety_select" class="znikniety">
+                    <ons-select id="klasylista1">
+                        <select id="klasylista" class="select-input select-input--material">
+                            <option value="" disabled selected>Wybierz klasę</option>
+                        </select>
+                    </ons-select>
+                </p>
+
+                <br />
+                <p id="znikniety_select2" class="zniknietyX2">
+                    <ons-select id="uczniowielista1">
+                        <select id="uczniowielista" class="select-input select-input--material">
+                            <option value="" disabled selected>Wybierz ucznia</option>
+                        </select>
+                    </ons-select>
+                </p>
+
+            </div>
+            <div id="przycisk1" style="text-align:center">
+
+                <span id="przycisk_fajny1">    <ons-button onclick="RozpocznijUczen(),KlasyGet()" class="button--pomaranczka2"><i class="fas fa-play"></i>    Rozpocznij </ons-button></span>
+
+            </div>
+            <div id="przycisk2" style="text-align:center" class="nima">
+
+                <span id="przycisk_fajny2">    <ons-button onclick="Cofnij()" class="button--pomaranczka2"><i class="fas fa-undo"></i>    Cofnij </ons-button></span>
+
+            </div>
+            <div class="card card1" id="card_id1">
+                <div class="card__content card__content1" id="card_id2" style="text-align:center;">
+
+
+
+                </div>
+            </div>
+        </ons-page>
+    </template>
+
+    <!--- ////////////////////////////////////////////////////////////////////////////-->
+    <template id="uczniowiesearch.html">
+        <ons-page id="uczniowie 2">
+
+            <div class="D1_class1" id="D1">
+                <p>
+                    <i class="fas fa-search" style="font-size:9rem; color:#ffa64d;"></i>
+                </p>
+                <p style="font-size:18px;">
+                    Wyszukaj ucznia<br />po imieniu i nazwisku
+
+                </p>
+                <br />
+                <span id="pustyspan "></span>
+                <p>
+                    <ons-search-input placeholder="Szukaj"
+                                      onchange="ons.notification.alert('Searched for: ' + this.value)">
+                        <input type="search" id="szukaj_ucznia" class="search-input search-input--material" placeholder="Szukaj">
+
+                    </ons-search-input>
+                </p>
+
+
+            </div>
+            <p id="button_uczen1" style="text-align:center">
+                <ons-button onclick="uczniowie_search1()" class="button--pomaranczka2"><i class="fas fa-check"></i>  Potwierdź </ons-button>
+            </p>
+            <div class="card card1" id="C1">
+                <div class="card__content card__content1" id="C2" style="text-align:center;">
+
+                </div>
+            </div>
+        </ons-page>
+    </template>
+
+
+
+
+
+    <!--//////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////--WYPOŻYCZ KSIĄŻKĘ--/////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////-->
+
+
+
+
+
+    <template id="wypozycz.html">
+        <ons-page id="wypozycz">
+            <div id="tymczasowy">
+
+                <ons-tabbar swipeable position="auto">
+
+
+
+
+                    <ons-tab page="wypozycz1.html" label="Sprawdz dostępność" icon="fa-search" active-icon="fa-edit">
+                    </ons-tab>
+
+                    <!--<ons-tab page="wypozycz2.html" label="Wyszukaj" icon="fa-search" active-icon="fa-edit">
+                    </ons-tab>-->
+
+                </ons-tabbar>
+
+                <ons-toolbar id="toolbar2page" class="toolbar--pomaranczowy">
+                    <div class="left"><ons-back-button></ons-back-button></div>
+                    <div class="center">Wypożycz Książkę</div>
+                    <div class="right"></div>
+                </ons-toolbar>
+            </div>
+        </ons-page>
+    </template>
+
+    <!--TABBARY WYPOZYCZ KSIAZKE-->
+
+    <template id="wypozycz1.html">
+        <ons-page id="wypozycz_1">
+
+            <div id="DX1" class="div_pierwszy">
+                <i class="fas fa-book ikonka_duza"></i>
+                <p class="pczcionka">
+                    Sprawdź dostępność<br /> książki!
+                </p>
+                <br />
+                <ons-search-input placeholder="Szukaj"
+                                  onchange="ons.notification.alert('Searched for: ' + this.value)">
+                    <input type="search" id="szukaj_ksiazki" class="search-input search-input--material" placeholder="Szukaj">
+
+                </ons-search-input>
+
+
+
+            </div>
+            <div id="button_wypozycz1" style="text-align:center">
+
+                <span id="button_wypozycz1">    <ons-button id="przycisk_hehe1"onclick="SzukajKsiazeczki()" class="button--pomaranczka2"><i class="fas fa-search"></i>    Wyszukaj </ons-button></span>
+
+            </div>
+            <div id="ksiazka_pokaz" class="card card1">
+                <div class="card__content card__content1" id="CX2" style="text-align:center;">
+
+                </div>
+            </div>
+            
+        </ons-page>
+    </template>
+
+    <!--- ////////////////////////////////////////////////////////////////////////////-->
+    <!--<template id="wypozycz2.html">
+        <ons-page id="wypozycz_2">
+
+          
+        
+           
+        </ons-page>
+    </template>-->
+
+
+    <!--//////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////--MENU UCZNIA--/////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////-->
+
+        <template id="menu_ucznia.html">
+            <ons-page id="menu_ucznia">
+                <div id="tymczasowy">
+    
+                    <ons-tabbar swipeable position="auto">
+    
+
+                        <ons-tab page="wypozyczone_ksiazki.html" label="Wypożyczone książki" icon="fa-book" active-icon="fa-male">
+                        </ons-tab>
+    
+                        <ons-tab page="historia_wypozyczen.html" label="Historia wypożyczeń" icon="fa-book" active-icon="fa-male" id="tabbar_historia">
+                        </ons-tab>
+
+                        <ons-tab page="sprawdz_dostepnosc.html" label="Sprawdź dostępność" icon="fa-search" active-icon="fa-edit" id="tabbar_asortyment">
+                        </ons-tab>
+    
+                    </ons-tabbar>
+                    <ons-toolbar id="toolbar2page" class="toolbar--pomaranczowy">
+                        <div class="left"><ons-back-button></ons-back-button></div>
+                        <div class="center">t1</div>
+                        <div class="right"></div>
+                    </ons-toolbar>
+                </div>
+            </ons-page>
+        </template>
+        <!--TABBAR UCZNIOWIE -->
+        <template id="wypozyczone_ksiazki.html">
+            <ons-page id="wypozyczone_ksiazki_menu">
+    
+                <div id="div_zawartosc" class="div_pierwszy">
+    
+                    <p id="wyp_ksiazki_im_naz"></p>
+
+                    <div class="card card1" id="card_uczen1_id1">
+                        <div class="card__content card__content2" id="card_uczen1_id2" style="text-align:center;">
+                            
+                        </div>
+                    </div>
+                    
+
+                </div>
+            </ons-page>
+        </template>
+    
+        <!--- ////////////////////////////////////////////////////////////////////////////-->
+        <template id="historia_wypozyczen.html">
+            <ons-page id="historia_wypozyczen_menu">
+                <div id="div_zawartosc" class="div_pierwszy">
+    
+                    <p id="hist_wyp"><h2>Historia wypożyczonych książek</h2></p>
+
+                    <div class="card card1" id="card_uczen2_id1">
+                        <div class="card__content card__content2" id="card_uczen2_id2" style="text-align:center;">
+                            
+                        </div>
+                    </div>
+                    
+
+                </div>
+            </ons-page>
+        </template>
+         <!--- ////////////////////////////////////////////////////////////////////////////-->
+        <template id="sprawdz_dostepnosc.html">
+            <ons-page id="sprawdz_dostepnosc_menu">
+                <div id="div_zawartosc" class="div_pierwszy">
+    
+                    <p id="sprawdz_dost"><h2>Sprawdź dostępność książek</h2></p>
+
+                    <div class="card card1" id="card_uczen3_id1">
+                        <div class="card__content card__content2" id="card_uczen3_id2" style="text-align:center;">
+                            <ons-button onclick="asortyment()" class="button--pomaranczka" id="asortyment">Asortyment</ons-button>
+                            
+                            <ons-button onclick="szukaj_asort()" class="button--pomaranczka" id="szukaj_asortyment">Wyszukaj</ons-button>
+                            <p>
+                                <ons-input id="szukaj_asortyment_input" type="text" modifier="underbar" placeholder="Szukaj" float></ons-input>
+                            </p>
+
+
+                        </div>
+                    </div>
+                    
+
+                </div>
+            </ons-page>
+        </template>
+
+</body>
+</html>
